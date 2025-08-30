@@ -2,12 +2,15 @@ package com.example.springspeciallecture.board.controller;
 
 import com.example.springspeciallecture.account.entity.Account;
 import com.example.springspeciallecture.account_profile.entity.AccountProfile;
+import com.example.springspeciallecture.board.controller.request_form.CreateBoardRequestForm;
 import com.example.springspeciallecture.board.controller.request_form.ListBoardRequestForm;
+import com.example.springspeciallecture.board.controller.response_form.CreateBoardResponseForm;
 import com.example.springspeciallecture.board.controller.response_form.ListBoardResponseForm;
 import com.example.springspeciallecture.board.entity.Board;
 import com.example.springspeciallecture.board.service.BoardService;
 import com.example.springspeciallecture.board.service.BoardServiceTests;
 import com.example.springspeciallecture.board.service.request.ListBoardRequest;
+import com.example.springspeciallecture.board.service.response.CreateBoardResponse;
 import com.example.springspeciallecture.board.service.response.ListBoardResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -76,5 +79,28 @@ public class BoardControllerTests {
         assertEquals(board.getTitle(), boardMap.get("title"));
         assertEquals(board.getContent(), boardMap.get("content"));
         assertEquals(otherAccountProfile.getNickname(), boardMap.get("nickname"));
+    }
+
+    @Test
+    void 게시글_저장() {
+        Account otherAccount = BoardServiceTests.createAccountWithId(1L);
+        AccountProfile otherAccountProfile = BoardServiceTests.createAccountProfileWithIdAndAccount(100L, otherAccount);
+
+        // 게시물이 무엇을 표현할 것인가
+        Board board = new Board("제목", otherAccountProfile, "내용");
+        ReflectionTestUtils.setField(board, "boardId", 1L);
+        ReflectionTestUtils.setField(board, "createDate", LocalDateTime.now());
+
+        //service가 createBoard 메소드를 호출한 이후 return되는 dto가 CreateBoardResponse가 맞는지 확인
+        CreateBoardResponse response = new CreateBoardResponse(board, otherAccountProfile);
+        when(boardService.registerBoard(any())).thenReturn(response);
+
+        //사용자가 작성 할 제목, 내용을 입력한다 (사용자 정보도 함께 전달)
+        CreateBoardRequestForm form = new CreateBoardRequestForm("제목", "내용", "사용자");
+        CreateBoardResponseForm result = boardController.registerBoard(form);
+
+        assertEquals("제목", result.getTitle());
+        assertEquals("내용", result.getContent());
+
     }
 }

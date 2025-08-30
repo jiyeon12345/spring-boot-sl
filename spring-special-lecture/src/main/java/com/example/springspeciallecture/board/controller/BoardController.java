@@ -1,15 +1,15 @@
 package com.example.springspeciallecture.board.controller;
 
+import com.example.springspeciallecture.board.controller.request_form.CreateBoardRequestForm;
 import com.example.springspeciallecture.board.controller.request_form.ListBoardRequestForm;
+import com.example.springspeciallecture.board.controller.response_form.CreateBoardResponseForm;
+import com.example.springspeciallecture.board.service.response.CreateBoardResponse;
 import com.example.springspeciallecture.board.service.response.ListBoardResponse;
 import com.example.springspeciallecture.board.controller.response_form.ListBoardResponseForm;
 import com.example.springspeciallecture.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,5 +31,13 @@ public class BoardController {
                 response.getTotalItems(),
                 response.getTotalPages()
         );
+    }
+
+    @PostMapping("/register")
+    public CreateBoardResponseForm registerBoard(CreateBoardRequestForm requestForm) {
+        log.info("registerBoard() -> requestForm: {}", requestForm);
+
+        CreateBoardResponse response = boardService.registerBoard(requestForm.toBoardRequest());
+        return CreateBoardResponseForm.form(response);
     }
 }

@@ -30,6 +30,11 @@ public class AccountProfileServiceImpl implements AccountProfileService {
     }
 
     @Override
+    public Optional<AccountProfile> loadProfileByNickname(String nickname) {
+        return accountProfileRepository.findWithAccountByNickname(nickname);
+    }
+
+    @Override
     public Optional<AccountProfile> loadProfileByEmailAndLoginType(String email, LoginType loginType) {
         return accountProfileRepository.findWithAccountByEmailAndLoginType(email, loginType);
     }

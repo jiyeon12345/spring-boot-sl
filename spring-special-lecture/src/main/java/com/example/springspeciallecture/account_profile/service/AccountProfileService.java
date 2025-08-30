@@ -10,5 +10,7 @@ import java.util.Optional;
 public interface AccountProfileService {
     AccountProfile createAccountProfile(Account account, RegisterAccountProfileRequest request);
     Optional<AccountProfile> loadProfileByEmail(String email);
+
+    Optional<AccountProfile> loadProfileByNickname(String nickname);
     Optional<AccountProfile> loadProfileByEmailAndLoginType(String email, LoginType loginType);
 }
