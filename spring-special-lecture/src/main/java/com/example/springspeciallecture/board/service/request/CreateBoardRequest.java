@@ -8,11 +8,11 @@ import lombok.ToString;
 public class CreateBoardRequest {
     final private String title;
     final private String content;
-    final private String userId;
+    final private String nickname;
 
-    public CreateBoardRequest(String title, String content, String userId) {
+    public CreateBoardRequest(String title, String content, String nickname) {
         this.title = title;
         this.content = content;
-        this.userId = userId;
+        this.nickname = nickname;
     }
 }

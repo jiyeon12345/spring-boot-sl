@@ -4,14 +4,17 @@ import com.example.springspeciallecture.account.entity.Account;
 import com.example.springspeciallecture.account_profile.entity.AccountProfile;
 import com.example.springspeciallecture.board.controller.request_form.CreateBoardRequestForm;
 import com.example.springspeciallecture.board.controller.request_form.ListBoardRequestForm;
+import com.example.springspeciallecture.board.controller.request_form.ModifyBoardRequestForm;
 import com.example.springspeciallecture.board.controller.response_form.CreateBoardResponseForm;
 import com.example.springspeciallecture.board.controller.response_form.ListBoardResponseForm;
+import com.example.springspeciallecture.board.controller.response_form.ModifyBoardResponseForm;
 import com.example.springspeciallecture.board.entity.Board;
 import com.example.springspeciallecture.board.service.BoardService;
 import com.example.springspeciallecture.board.service.BoardServiceTests;
 import com.example.springspeciallecture.board.service.request.ListBoardRequest;
 import com.example.springspeciallecture.board.service.response.CreateBoardResponse;
 import com.example.springspeciallecture.board.service.response.ListBoardResponse;
+import com.example.springspeciallecture.board.service.response.ModifyBoardResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -102,5 +105,33 @@ public class BoardControllerTests {
         assertEquals("제목", result.getTitle());
         assertEquals("내용", result.getContent());
 
+    }
+
+    @Test
+    void 게시물_수정() {
+        Account otherAccount = BoardServiceTests.createAccountWithId(1L);
+        AccountProfile otherAccountProfile = BoardServiceTests.createAccountProfileWithIdAndAccount(100L, otherAccount);
+
+        // 게시물이 무엇을 표현할 것인가
+        Board board = new Board("수정된 제목", otherAccountProfile, "수정된 내용");
+        ReflectionTestUtils.setField(board, "boardId", 1L);
+        ReflectionTestUtils.setField(board, "createDate", LocalDateTime.now());
+        ReflectionTestUtils.setField(board, "modifyDate", LocalDateTime.now());
+
+        //외부에서 가지고 오는 데이터 정보
+        ModifyBoardRequestForm requestForm = new ModifyBoardRequestForm(1L,"수정된 제목", "수정된 내용", "사용자");
+
+        //controller가 modifyBoard 메소드를 호출 시 ModifyBoardResponse dto가 return 되는지 확인
+        ModifyBoardResponse response =
+                new ModifyBoardResponse(1L, "수정된 제목", "수정된 내용", "사용자");
+
+        when(boardService.modifyBoard(any())).thenReturn(response);
+
+        //controller에서 modifyBoard 작업
+        ModifyBoardResponseForm responseForm = boardController.modifyBoard(requestForm);
+
+        assertEquals("수정된 제목", responseForm.getTitle());
+        assertEquals("수정된 내용", responseForm.getContent());
+        assertEquals("사용자", responseForm.getNickname());
     }
 }
